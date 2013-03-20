@@ -1,0 +1,180 @@
+Attribute VB_Name = "Restructure"
+Option Explicit
+
+Sub DatesToCol()
+    Dim rDates() As Variant
+    Dim rMonth() As Variant
+    Dim rYear() As Variant
+    Dim iCounter As Long
+    Dim iLength As Long
+
+    iLength = Range("A:A").SpecialCells(xlCellTypeConstants).Count
+    rDates = Range("E:E").SpecialCells(xlCellTypeConstants)
+    rMonth = Range(Cells(1, 8), Cells(iLength, 8))
+    rYear = Range(Cells(1, 9), Cells(iLength, 9))
+
+    For iCounter = 2 To UBound(rDates)
+        rMonth(iCounter, 1) = Format(rDates(iCounter, 1), "mmm")
+        rYear(iCounter, 1) = Format(rDates(iCounter, 1), "yyyy")
+    Next
+
+    Range(Cells(1, 8), Cells(UBound(rDates), 8)) = rMonth()
+    Range("H1").Value = "Month"
+
+    Range(Cells(1, 9), Cells(UBound(rDates), 9)) = rYear()
+    Range("I1").Value = "Year"
+
+    With ActiveWorkbook.Worksheets("Temp").Sort
+        .SortFields.Clear
+        .SortFields.Add Key:=Range(Cells(2, 5), Cells(iLength, 5)), _
+                        SortOn:=xlSortOnValues, _
+                        Order:=xlAscending, _
+                        DataOption:=xlSortNormal
+
+        .SetRange Range(Cells(1, 1), Cells(iLength, 9))
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+
+End Sub
+
+Sub SeparateAP()
+    Dim iLength As Long
+    iLength = Range("A:A").SpecialCells(xlCellTypeConstants).Count
+
+    Worksheets("Temp").AutoFilterMode = False
+    Range(Cells(1, 1), Cells(iLength, 9)).AutoFilter Field:=4, Criteria1:="A"
+    ActiveSheet.UsedRange.SpecialCells(xlCellTypeVisible).Copy Destination:=Worksheets("A Whse").Range("A1")
+    ActiveSheet.AutoFilter.ShowAllData
+
+    Range(Cells(1, 1), Cells(iLength, 9)).AutoFilter Field:=4, Criteria1:="P"
+    ActiveSheet.UsedRange.SpecialCells(xlCellTypeVisible).Copy Destination:=Worksheets("P Whse").Range("A1")
+    ActiveSheet.AutoFilter.ShowAllData
+    Worksheets("Temp").AutoFilterMode = False
+End Sub
+
+'Source = Data Sheet Name, PTableName = Unique Name new PTable, Destination = Destination Sheet Name
+Sub CreatePTable(Source As String, PTableName As String, Destination As String)
+    Dim iRows As Long
+    Dim iCols As Long
+
+    Worksheets(Source).Select
+    iRows = ActiveSheet.UsedRange.Rows.Count
+    iCols = ActiveSheet.UsedRange.Columns.Count
+
+    ActiveWorkbook.PivotCaches.Create( _
+            SourceType:=xlDatabase, _
+            SourceData:=Worksheets(Source).Range(Cells(1, 1), Cells(iRows, iCols)), _
+            Version:=xlPivotTableVersion14).CreatePivotTable _
+            TableDestination:=Worksheets(Destination).Range("A1"), _
+            TableName:=PTableName, _
+            DefaultVersion:=xlPivotTableVersion14
+
+    Sheets(Destination).Select
+
+    With ActiveSheet.PivotTables(PTableName)
+        .PivotFields("Part").Orientation = xlRowField
+        .PivotFields("Part").Position = 1
+        .PivotFields("Part").Subtotals = Array(False, False, False, False, False, False, False, False, False, False, False, False)
+        .PivotFields("Part").LayoutForm = xlTabular
+        .PivotFields("Part Description").Orientation = xlRowField
+        .PivotFields("Part Description").Position = 2
+        .PivotFields("Year").Orientation = xlColumnField
+        .PivotFields("Year").Position = 1
+        .PivotFields("Year").Subtotals = Array(False, False, False, False, False, False, False, False, False, False, False, False)
+        .PivotFields("Month").Orientation = xlColumnField
+        .PivotFields("Month").Position = 2
+        .AddDataField ActiveSheet.PivotTables(PTableName).PivotFields("Forecast Qty"), "Sum of Forecast Qty", xlSum
+        .ColumnGrand = False
+    End With
+
+    Cells.Select
+    Selection.Copy
+    Selection.PasteSpecial Paste:=xlPasteValues, SkipBlanks:=False, Transpose:=False
+    Application.CutCopyMode = False
+
+    Rows("1:1").ClearContents
+    Range("A1").Select
+End Sub
+
+Sub FormatPivTable(wksheet As String)
+    Dim i As Integer
+    Dim lCols As Long
+    Dim sYear As String
+    Dim vCell As Variant
+    Dim rngYear As Range
+    Dim rngMonth As Range
+    Dim rngHeaders As Range
+
+    Worksheets(wksheet).Select
+
+    lCols = ActiveSheet.UsedRange.Columns.Count
+    Set rngYear = Range(Cells(2, 3), Cells(2, lCols))
+    Set rngMonth = Range(Cells(3, 3), Cells(3, lCols))
+    Set rngHeaders = Range(Cells(1, 3), Cells(1, lCols))
+
+    For i = 1 To rngYear.Columns.Count
+        If rngYear(1, i).Value = "Grand Total" Then
+            rngHeaders(1, i).Value = "Total"
+            Exit For
+        End If
+
+        If rngYear(1, i).Value <> "" Then
+            sYear = rngYear(1, i).Value
+        Else
+            rngYear(1, i).Value = sYear
+        End If
+        rngHeaders(1, i).Value = rngMonth(1, i).Value & "-" & rngYear(1, i).Value
+    Next
+
+    Range("A1").Value = "Item Number"
+    Range("B1").Value = "Description"
+    Range("2:3").Delete Shift:=xlUp
+
+    ActiveSheet.UsedRange.SpecialCells(xlCellTypeBlanks).Select
+    Selection.Value = 0
+    Range("C1").Select
+
+    For i = 1 To rngHeaders.Columns.Count - 1
+        If Format(ActiveCell.Value, "yyyymm") < Format(Date, "yyyymm") Then
+            Columns(ActiveCell.Column).Delete Shift:=xlToLeft
+        Else
+            Exit For
+        End If
+    Next
+
+    lCols = ActiveSheet.UsedRange.Columns.Count - 1
+    Set rngHeaders = Range(Cells(1, 3), Cells(1, lCols))
+
+    For Each vCell In rngHeaders
+        vCell.Value = Format(vCell.Value, "mmm")
+    Next
+
+    Do While Cells(1, 15).Text <> "Total"
+        Columns(15).Delete
+    Loop
+    
+    
+    Range(Cells(2, 15), Cells(ActiveSheet.UsedRange.Rows.Count, 15)).ClearContents
+    Range("O2").Formula = "=SUM(C2:N2)"
+    Range("O2").AutoFill Destination:=Range(Cells(2, 15), Cells(ActiveSheet.UsedRange.Rows.Count, 15))
+    Range(Cells(2, 15), Cells(ActiveSheet.UsedRange.Rows.Count, 15)).Value = _
+    Range(Cells(2, 15), Cells(ActiveSheet.UsedRange.Rows.Count, 15)).Value
+End Sub
+
+
+
+
+
+
+
+
+
+
+
+
+
+
