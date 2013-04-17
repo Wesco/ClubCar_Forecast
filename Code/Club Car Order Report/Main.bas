@@ -10,7 +10,6 @@ Sub OrderReport()
     Worksheets("Info").Range("B4").Value = Format(Date, "m/d/yyyy")
     Worksheets("Info").Range("B5").Value = Environ("USERNAME")
 
-    RemoveOldData
     ImportData
     FormatGaps
     
