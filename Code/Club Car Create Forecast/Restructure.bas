@@ -102,7 +102,9 @@ End Sub
 
 Sub FormatPivTable(wksheet As String)
     Dim i As Integer
+    Dim iMonth As Integer
     Dim lCols As Long
+    Dim lRows As Long
     Dim sYear As String
     Dim vCell As Variant
     Dim rngYear As Range
@@ -111,7 +113,9 @@ Sub FormatPivTable(wksheet As String)
 
     Worksheets(wksheet).Select
 
+    iMonth = 12
     lCols = ActiveSheet.UsedRange.Columns.Count
+    lRows = ActiveSheet.UsedRange.Rows.Count
     Set rngYear = Range(Cells(2, 3), Cells(2, lCols))
     Set rngMonth = Range(Cells(3, 3), Cells(3, lCols))
     Set rngHeaders = Range(Cells(1, 3), Cells(1, lCols))
@@ -147,17 +151,43 @@ Sub FormatPivTable(wksheet As String)
     Next
 
     lCols = ActiveSheet.UsedRange.Columns.Count - 1
+    lRows = ActiveSheet.UsedRange.Rows.Count
     Set rngHeaders = Range(Cells(1, 3), Cells(1, lCols))
 
     For Each vCell In rngHeaders
         vCell.Value = Format(vCell.Value, "mmm")
     Next
 
+    'Search column headers for the total column
+    If ActiveSheet.UsedRange.Columns.Count < 15 Then
+        i = 1
+        Do While Cells(1, i).Value <> "Total"
+            i = i + 1
+        Loop
+
+        'After finding the total column go left one to find the
+        'last column containing a month
+        i = i - 1
+        Do While Format(iMonth, "mmm") <> Cells(1, i).Text
+            iMonth = iMonth - 1
+        Loop
+
+        'After finding the number of the current month
+        'add a month and insert as a new column
+        'until 15 months have been reached
+        Do While Cells(1, 15).Text <> "Total"
+            iMonth = iMonth + 1
+            i = i + 1
+            Columns(i).Insert
+            Cells(1, i).Value = Format(iMonth, "mmm")
+            Range(Cells(2, i), Cells(lRows, i)).Value = 0
+        Loop
+    End If
+
     Do While Cells(1, 15).Text <> "Total"
         Columns(15).Delete
     Loop
-    
-    
+
     Range(Cells(2, 15), Cells(ActiveSheet.UsedRange.Rows.Count, 15)).ClearContents
     Range("O2").Formula = "=SUM(C2:N2)"
     Range("O2").AutoFill Destination:=Range(Cells(2, 15), Cells(ActiveSheet.UsedRange.Rows.Count, 15))
