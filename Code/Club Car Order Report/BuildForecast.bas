@@ -78,19 +78,32 @@ Sub CreateForecast()
     Loop
 
     Range("A1").Select
-    With Range("A:A")
-        For i = 0 To .CurrentRegion.Rows.Count
-            ActiveCell.Offset(1, 0).Select
-            If ActiveCell.Value = "5113106375" Then
-                Cells(ActiveCell.Row, 4).Formula = "=CONVERT(" & ActiveCell.Offset(0, 3).Value & "*36,""yd"",""ft"")"
-                Cells(ActiveCell.Row, 5).Formula = "=CONVERT(" & ActiveCell.Offset(0, 4).Value & "*36,""yd"",""ft"")"
-                Cells(ActiveCell.Row, 6).Formula = "=CONVERT(" & ActiveCell.Offset(0, 5).Value & "*36,""yd"",""ft"")"
-                Cells(ActiveCell.Row, 7).Formula = "=CONVERT(" & ActiveCell.Offset(0, 6).Value & "*36,""yd"",""ft"")"
-                Cells(ActiveCell.Row, 8).Formula = "=CONVERT(" & ActiveCell.Offset(0, 7).Value & "*36,""yd"",""ft"")"
-                Exit For
-            End If
-        Next
-    End With
+    For i = 2 To ActiveSheet.UsedRange.Rows.Count
+        If Cells(i, 1).Value = "5113106375" Then
+            'On Hand
+            Cells(i, 4).Formula = "=CONVERT(" & Cells(i, 4).Value & "*36,""yd"",""ft"")"
+            'On Reserve
+            Cells(i, 5).Formula = "=CONVERT(" & Cells(i, 5).Value & "*36,""yd"",""ft"")"
+            'On Order
+            Cells(i, 6).Formula = "=CONVERT(" & Cells(i, 6).Value & "*36,""yd"",""ft"")"
+            'Back Order
+            Cells(i, 7).Formula = "=CONVERT(" & Cells(i, 7).Value & "*36,""yd"",""ft"")"
+            'WDC
+            Cells(i, 8).Formula = "=CONVERT(" & Cells(i, 8).Value & "*36,""yd"",""ft"")"
+        End If
+        If Cells(i, 1).Value = "99814198888" Then
+            'On Hand
+            Cells(i, 4).Value = Cells(i, 4).Value * 50
+            'On Reserve
+            Cells(i, 5).Value = Cells(i, 5).Value * 50
+            'On Order
+            Cells(i, 6).Value = Cells(i, 6).Value * 50
+            'Back Order
+            Cells(i, 7).Value = Cells(i, 7).Value * 50
+            'WDC
+            Cells(i, 8).Value = Cells(i, 8).Value * 50
+        End If
+    Next
 
     With Range("A:X")
         Range(Cells(1, 1), Cells(.CurrentRegion.Rows.Count, 24)).Select
