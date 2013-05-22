@@ -30,35 +30,35 @@ Sub CreateForecast()
     Range("C2").AutoFill Destination:=Range(Cells(2, 3), Cells(iLength, 3))
 
     'On Hand
-    Range("D2").Formula = "=VLOOKUP(A2, Gaps!A:C, 3, False)"
+    Range("D2").Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:C, 3, False),""0"")"
     Range("D2").AutoFill Destination:=Range(Cells(2, 4), Cells(iLength, 4))
 
     'On Reserve
-    Range("E2").Formula = "=VLOOKUP(A2, Gaps!A:D, 4, False)"
+    Range("E2").Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:D, 4, False),""0"")"
     Range("E2").AutoFill Destination:=Range(Cells(2, 5), Cells(iLength, 5))
 
     'On Order
-    Range("F2").Formula = "=VLOOKUP(A2,Gaps!A:F,6,FALSE)"
+    Range("F2").Formula = "=IFERROR(VLOOKUP(A2,Gaps!A:F,6,FALSE),""0"")"
     Range("F2").AutoFill Destination:=Range(Cells(2, 6), Cells(iLength, 6))
 
     'On Back Order
-    Range("G2").Formula = "=VLOOKUP(A2, Gaps!A:E, 5, False)"
+    Range("G2").Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:E, 5, False),""0"")"
     Range("G2").AutoFill Destination:=Range(Cells(2, 7), Cells(iLength, 7))
 
     'WDC Qty On Hand
-    Range("H2").Formula = "=VLOOKUP(A2, Gaps!A:AG, 33, False)"
+    Range("H2").Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:AG, 33, False),""0"")"
     Range("H2").AutoFill Destination:=Range(Cells(2, 8), Cells(iLength, 8))
 
     'Average Unit Cost
-    Range("I2").Formula = "=VLOOKUP(A2, Gaps!A:AC, 29, False)"
+    Range("I2").Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:AC, 29, False),""0"")"
     Range("I2").AutoFill Destination:=Range(Cells(2, 9), Cells(iLength, 9))
 
     'Unit of Measure
-    Range("J2").Formula = "=VLOOKUP(A2, Gaps!A:AF, 32, False)"
+    Range("J2").Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:AF, 32, False),""0"")"
     Range("J2").AutoFill Destination:=Range(Cells(2, 10), Cells(iLength, 10))
 
     'Supplier
-    Range("K2").Formula = "=VLOOKUP(A2, Gaps!A:AI, 35, False)"
+    Range("K2").Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:AI, 35, False),"""")"
     Range("K2").AutoFill Destination:=Range(Cells(2, 11), Cells(iLength, 11))
 
     'Month 1 Forecast
