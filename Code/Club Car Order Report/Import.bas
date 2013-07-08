@@ -25,13 +25,13 @@ Sub ImportData()
     sWhseP = sWhseP & sDate & ".xlsx"
     sWhseA = sWhseA & sDate & ".xlsx"
     'Reset loop variables
-    sDate = Format(Date, "m-dd-yy")
+    sDate = Format(Date, "yyyy-mm-dd")
     i = 0
 
     'Find the most up to date gaps file
     Do While FileOrDirExists(sGapsLoc & sGaps & sDate & ".xlsx") = False
         i = i + 1
-        sDate = Format(Date - i, "m-dd-yy")
+        sDate = Format(Date - i, "yyyy-mm-dd")
     Loop
     
     Worksheets("Info").Range("B2").Value = sDate
