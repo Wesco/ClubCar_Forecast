@@ -69,7 +69,7 @@ Sub FormatHots()
     Selection.AutoFilter Field:=15, Criteria1:=RGB(255, 199, 206), Operator:=xlFilterCellColor
 End Sub
 
-Sub Macro3()
+Sub AddVisCol()
 
     Columns("M:M").Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
 
@@ -118,7 +118,7 @@ Sub Macro3()
     Columns("G:G").Delete
 End Sub
 
-Sub Macro4()
+Sub AddSparkLines()
     Columns("L:L").Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
     Range("L1").Value = "Vis"
     Range("L2").Select

@@ -7,14 +7,18 @@ Sub ExportForecast()
     Dim NewWkbk As String
 
     Workbooks(MacroWkbk).Sheets("Forecast").Copy
+    Columns.AutoFit
     NewWkbk = ActiveWorkbook.Name
-    Macro3
+    AddVisCol
 
     On Error Resume Next
 
     Workbooks(MacroWkbk).Sheets("Bulk").Copy After:=Workbooks(NewWkbk).Sheets(Sheets.Count)
+    Columns.AutoFit
     Workbooks(MacroWkbk).Sheets("Non-Stock Items").Copy After:=Workbooks(NewWkbk).Sheets(Sheets.Count)
+    Columns.AutoFit
     Workbooks(MacroWkbk).Sheets("Info").Copy After:=Workbooks(NewWkbk).Sheets(Sheets.Count)
+    Columns.AutoFit
     Err.Clear
     
     Application.DisplayAlerts = True
@@ -30,7 +34,7 @@ Sub ExportForecast()
     Err.Clear
 
     Workbooks(MacroWkbk).Sheets("Hotsheet").Copy
-    Macro4
+    AddSparkLines
 
     ActiveWorkbook.BreakLink Name:="C:\Users\treische\Desktop\New folder\Club Car\Club Car Report.xlsm", Type:=xlExcelLinks
     Err.Clear
