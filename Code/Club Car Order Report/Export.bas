@@ -7,9 +7,9 @@ Sub ExportForecast()
     Dim NewWkbk As String
 
     Workbooks(MacroWkbk).Sheets("Forecast").Copy
-    Columns.AutoFit
     NewWkbk = ActiveWorkbook.Name
     AddVisCol
+    Columns.AutoFit
 
     On Error Resume Next
 
