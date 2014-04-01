@@ -11,12 +11,7 @@ Sub Main()
     FormatPivTable "PivotTableA"
     FormatPivTable "PivotTableP"
     SaveForecast
-    Worksheets("A Whse").Cells.Delete
-    Worksheets("P Whse").Cells.Delete
-    Worksheets("PivotTableA").Cells.Delete
-    Worksheets("PivotTableP").Cells.Delete
-    Worksheets("Temp").Cells.Delete
-    Worksheets("Macro").Select
+    Clean
     ActiveWorkbook.Saved = True
     MsgBox "Complete!"
     Application.ScreenUpdating = True
@@ -25,13 +20,20 @@ End Sub
 
 Sub Clean()
     Dim s As Worksheet
+    Dim PrevDispAlert As Boolean
+    
+    PrevDispAlert = Application.DisplayAlerts
+    Application.DisplayAlerts = False
     
     For Each s In ThisWorkbook.Sheets
         If s.Name <> "Macro" Then
             s.Select
             s.Cells.Delete
+            s.Range("A1").Select
         End If
     Next
+    
+    Application.DisplayAlerts = PrevDispAlert
     
     Sheets("Macro").Select
     Range("C6").Select
