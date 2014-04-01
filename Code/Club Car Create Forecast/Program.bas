@@ -22,3 +22,17 @@ Sub Main()
     Application.ScreenUpdating = True
     Application.Quit
 End Sub
+
+Sub Clean()
+    Dim s As Worksheet
+    
+    For Each s In ThisWorkbook.Sheets
+        If s.Name <> "Macro" Then
+            s.Select
+            s.Cells.Delete
+        End If
+    Next
+    
+    Sheets("Macro").Select
+    Range("C6").Select
+End Sub

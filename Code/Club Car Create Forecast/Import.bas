@@ -3,7 +3,7 @@ Option Explicit
 
 Sub ImportForecast()
     Dim Fcst As String
-    Dim iRows As Long
+    Dim TotalRows As Long
     Fcst = Application.GetOpenFilename("ExportReport (*.xls; *.aspx), *.xls;*.aspx")
 
     On Error GoTo CANCEL_OPEN
@@ -13,10 +13,10 @@ Sub ImportForecast()
     ActiveSheet.UsedRange.Copy Destination:=ThisWorkbook.Worksheets("Temp").Range("A1")
     ActiveWorkbook.Close
     Worksheets("Temp").Select
-    iRows = ActiveSheet.UsedRange.Rows.Count + 1
+    TotalRows = Rows(Rows.Count).End(xlUp).Row + 1
 
     Workbooks.Open FileName:="\\br3615gaps\gaps\Club Car\Southern ASM Forecast\ASM Forecast.xlsx"
-    ActiveSheet.UsedRange.Copy Destination:=ThisWorkbook.Worksheets("Temp").Cells(iRows, 1)
+    ActiveSheet.UsedRange.Copy Destination:=ThisWorkbook.Worksheets("Temp").Cells(TotalRows, 1)
     ActiveWorkbook.Close
 
     Cells.WrapText = False

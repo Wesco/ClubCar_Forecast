@@ -2,36 +2,27 @@ Attribute VB_Name = "Restructure"
 Option Explicit
 
 Sub DatesToCol()
-    Dim rDates() As Variant
-    Dim rMonth() As Variant
-    Dim rYear() As Variant
-    Dim iCounter As Long
-    Dim iLength As Long
-
-    iLength = Range("A:A").SpecialCells(xlCellTypeConstants).Count
-    rDates = Range("E:E").SpecialCells(xlCellTypeConstants)
-    rMonth = Range(Cells(1, 8), Cells(iLength, 8))
-    rYear = Range(Cells(1, 9), Cells(iLength, 9))
-
-    For iCounter = 2 To UBound(rDates)
-        rMonth(iCounter, 1) = Format(rDates(iCounter, 1), "mmm")
-        rYear(iCounter, 1) = Format(rDates(iCounter, 1), "yyyy")
-    Next
-
-    Range(Cells(1, 8), Cells(UBound(rDates), 8)) = rMonth()
+    Dim TotalRows As Long
+    
+    Sheets("Temp").Select
+    TotalRows = Rows(Rows.Count).End(xlUp).Row
+    
     Range("H1").Value = "Month"
-
-    Range(Cells(1, 9), Cells(UBound(rDates), 9)) = rYear()
+    Range("H2:H" & TotalRows).Formula = "=TEXT(E2,""mmm"")"
+    Range("H2:H" & TotalRows).Value = Range("H2:H" & TotalRows).Value
+    
     Range("I1").Value = "Year"
+    Range("I2:I" & TotalRows).Formula = "=TEXT(E2,""yyyy"")"
+    Range("I2:I" & TotalRows).Value = Range("I2:I" & TotalRows).Value
 
     With ActiveWorkbook.Worksheets("Temp").Sort
         .SortFields.Clear
-        .SortFields.Add Key:=Range(Cells(2, 5), Cells(iLength, 5)), _
+        .SortFields.Add Key:=Range("E1:E" & TotalRows), _
                         SortOn:=xlSortOnValues, _
                         Order:=xlAscending, _
                         DataOption:=xlSortNormal
 
-        .SetRange Range(Cells(1, 1), Cells(iLength, 9))
+        .SetRange Range(Cells(1, 1), Cells(TotalRows, 9))
         .Header = xlYes
         .MatchCase = False
         .Orientation = xlTopToBottom
