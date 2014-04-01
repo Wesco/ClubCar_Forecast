@@ -22,7 +22,7 @@ Sub DatesToCol()
                         Order:=xlAscending, _
                         DataOption:=xlSortNormal
 
-        .SetRange Range(Cells(1, 1), Cells(TotalRows, 9))
+        .SetRange Range("A1:I" & TotalRows)
         .Header = xlYes
         .MatchCase = False
         .Orientation = xlTopToBottom
@@ -33,17 +33,19 @@ Sub DatesToCol()
 End Sub
 
 Sub SeparateAP()
-    Dim iLength As Long
-    iLength = Range("A:A").SpecialCells(xlCellTypeConstants).Count
+    Dim TotalRows As Long
+    
+    Sheets("Temp").Select
+    TotalRows = Rows(Rows.Count).End(xlUp).Row
 
-    Worksheets("Temp").AutoFilterMode = False
-    Range(Cells(1, 1), Cells(iLength, 9)).AutoFilter Field:=4, Criteria1:="A"
-    ActiveSheet.UsedRange.SpecialCells(xlCellTypeVisible).Copy Destination:=Worksheets("A Whse").Range("A1")
+    Range("A1:I" & TotalRows).AutoFilter Field:=4, Criteria1:="A"
+    ActiveSheet.UsedRange.Copy Destination:=Sheets("A Whse").Range("A1")
     ActiveSheet.AutoFilter.ShowAllData
 
-    Range(Cells(1, 1), Cells(iLength, 9)).AutoFilter Field:=4, Criteria1:="P"
-    ActiveSheet.UsedRange.SpecialCells(xlCellTypeVisible).Copy Destination:=Worksheets("P Whse").Range("A1")
+    Range("A1:I" & TotalRows).AutoFilter Field:=4, Criteria1:="P"
+    ActiveSheet.UsedRange.Copy Destination:=Sheets("P Whse").Range("A1")
     ActiveSheet.AutoFilter.ShowAllData
+    
     Worksheets("Temp").AutoFilterMode = False
 End Sub
 
