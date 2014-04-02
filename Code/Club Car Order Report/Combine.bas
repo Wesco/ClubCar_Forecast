@@ -2,100 +2,93 @@ Attribute VB_Name = "Combine"
 Option Explicit
 
 Sub PTableAP()
-    Dim iRowCount As Integer, i As Integer
-    Dim rColHeaders As Range
+    Dim TotalRows As Long
+    Dim TotalCols As Long
     Dim aPTableFields() As String
-    Dim vCell As Variant
+    Dim PrevDispAlert As Boolean
+    Dim i As Integer
 
+    'Get P forecast data
     Worksheets("P Forecast").Select
-    Range("A1").Select
-    Columns(ActiveCell.CurrentRegion.Columns.Count).Delete
-    Columns(2).Delete
-    With Range("A:M")
-        iRowCount = .CurrentRegion.Rows.Count
-        Range(Cells(1, 1), Cells(iRowCount, .CurrentRegion.Columns.Count)).Copy Destination:=Worksheets("Temp").Range("A1")
-    End With
-    Application.CutCopyMode = False
+    PrevDispAlert = Application.DisplayAlerts
+    TotalCols = Columns(Columns.Count).End(xlToLeft).Column
+    TotalRows = Rows(Rows.Count).End(xlUp).Row
+    Columns(TotalCols).Delete   'Remove Totals column
+    Columns(2).Delete           'Remove descriptions column
+    ActiveSheet.UsedRange.Copy Destination:=Sheets("Temp").Range("A1")
+
+    'Get A forecast data
     Worksheets("A Forecast").Select
-    Range("A1").Select
-    Columns(ActiveCell.CurrentRegion.Columns.Count).Delete
-    Columns(2).Delete
-    With Range("A:M")
-        Range(Cells(1, 1), Cells(.CurrentRegion.Rows.Count, .CurrentRegion.Columns.Count)).Copy Destination:=Worksheets("Temp").Cells(iRowCount + 1, 1)
-    End With
-    Application.CutCopyMode = False
+    TotalCols = Columns(Columns.Count).End(xlToLeft).Column
+    Columns(TotalCols).Delete   'Remove Totals column
+    Columns(2).Delete           'Remove descriptions column
+    ActiveSheet.UsedRange.Copy Destination:=Sheets("Temp").Range("A" & TotalRows + 1)
+
     Worksheets("Temp").Select
-    Rows(iRowCount + 1).Delete
-    Set rColHeaders = Range("A1:M1")
-    ReDim aPTableFields(1 To rColHeaders.Columns.Count)
-    For Each vCell In rColHeaders
-        i = i + 1
-        aPTableFields(i) = vCell.Text
+    Rows(TotalRows + 1).Delete  'Remove A forecast header
+    TotalCols = Columns(Columns.Count).End(xlToLeft).Column
+    TotalRows = Rows(Rows.Count).End(xlUp).Row
+
+    'Load column headers into an array
+    ReDim aPTableFields(1 To TotalCols)
+    For i = 1 To TotalCols
+        aPTableFields(i) = Cells(1, i).Text
     Next
-    With Range("A:M")
-        Range(Cells(1, 1), Cells(.CurrentRegion.Rows.Count, .CurrentRegion.Columns.Count)).Select
-    End With
-    With Selection
-        .AutoFilter
-        ActiveWorkbook.Worksheets("Temp").AutoFilter.Sort.SortFields.Clear
-        ActiveWorkbook.Worksheets("Temp").AutoFilter.Sort.SortFields.Add _
-                Key:=Range(Cells(1, 1), Cells(.CurrentRegion.Rows.Count, 1)), _
-                SortOn:=xlSortOnValues, _
-                Order:=xlAscending, _
-                DataOption:=xlSortNormal
-    End With
-    With ActiveWorkbook.Worksheets("Temp").AutoFilter.Sort
+
+    'Sort item numbers smallest to largest
+    With ActiveWorkbook.Worksheets("Temp").Sort
+        .SortFields.Clear
+        .SortFields.Add Key:=Range("A1"), _
+                        SortOn:=xlSortOnValues, _
+                        Order:=xlAscending, _
+                        DataOption:=xlSortTextAsNumbers
+        .SetRange Range("A1:M" & TotalRows)
         .Header = xlYes
         .MatchCase = False
         .Orientation = xlTopToBottom
         .SortMethod = xlPinYin
         .Apply
     End With
-    With Selection
-        ActiveWorkbook.PivotCaches.Create( _
-                SourceType:=xlDatabase, _
-                SourceData:="Temp!" & Range(Cells(1, 1), Cells(.CurrentRegion.Rows.Count, .CurrentRegion.Columns.Count)).Address, _
-                Version:=xlPivotTableVersion14).CreatePivotTable _
-                TableDestination:="PTableForecast!R3C1", TableName:="PTableCombined", _
-                DefaultVersion:=xlPivotTableVersion14
-    End With
-    Worksheets("PTableForecast").Select
-    Cells(3, 1).Select
-    With ActiveSheet.PivotTables("PTableCombined").PivotFields(aPTableFields(1))
-        .Orientation = xlRowField
-        .Position = 1
-    End With
+
+    'Create a pivot table out of the combined forecasts
+    ActiveWorkbook.PivotCaches.Create(SourceType:=xlDatabase, _
+                                      SourceData:=Sheets("Temp").Range("A1:M" & TotalRows), _
+                                      Version:=xlPivotTableVersion14).CreatePivotTable _
+                                      TableDestination:=Sheets("PTableForecast").Range("A1"), _
+                                      TableName:="PTableCombined", _
+                                      DefaultVersion:=xlPivotTableVersion14
+
+    Sheets("PTableForecast").Select
+    
+    'Add fields to the pivot table
     With ActiveSheet.PivotTables("PTableCombined")
-        .AddDataField ActiveSheet.PivotTables("PTableCombined").PivotFields(aPTableFields(2)), "Sum of Aug", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTableCombined").PivotFields(aPTableFields(3)), "Sum of Sep", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTableCombined").PivotFields(aPTableFields(4)), "Sum of Oct", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTableCombined").PivotFields(aPTableFields(5)), "Sum of Nov", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTableCombined").PivotFields(aPTableFields(6)), "Sum of Dec", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTableCombined").PivotFields(aPTableFields(7)), "Sum of Jan", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTableCombined").PivotFields(aPTableFields(8)), "Sum of Feb", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTableCombined").PivotFields(aPTableFields(9)), "Sum of Mar", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTableCombined").PivotFields(aPTableFields(10)), "Sum of Apr", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTableCombined").PivotFields(aPTableFields(11)), "Sum of May", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTableCombined").PivotFields(aPTableFields(12)), "Sum of Jun", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTableCombined").PivotFields(aPTableFields(13)), "Sum of Jul", xlSum
+        .PivotFields(aPTableFields(1)).Orientation = xlRowField
+        .PivotFields(aPTableFields(1)).Position = 1
+        For i = 2 To UBound(aPTableFields)
+            .AddDataField ActiveSheet.PivotTables("PTableCombined").PivotFields(aPTableFields(i)), "Sum of " & Format(aPTableFields(i), "mmm"), xlSum
+        Next
     End With
-    Rows("1:2").Delete
-    With Range("A:A")
-        Application.DisplayAlerts = False
-        Range(Cells(1, 1), Cells(.CurrentRegion.Rows.Count, .CurrentRegion.Columns.Count)).Copy
-        .PasteSpecial Paste:=xlPasteValues
-        Application.CutCopyMode = False
-        Application.DisplayAlerts = True
-        Range("A1:M1").Value = aPTableFields
-        Rows(.CurrentRegion.Rows.Count).Delete
-    End With
-    removefilter ("Temp")
-    Worksheets("Temp").Cells.Delete
-    With Range("A:A")
-        Range(Cells(1, 1), Cells(.CurrentRegion.Rows.Count, .CurrentRegion.Columns.Count)).Copy _
-                Destination:=Worksheets("Temp").Range("A1")
-        Application.CutCopyMode = False
-    End With
+    
+    TotalRows = Rows(Rows.Count).End(xlUp).Row
+    TotalCols = Columns(Columns.Count).End(xlToLeft).Column
+    
+    'Get data from the pivot table and store it as values
+    Application.DisplayAlerts = False
+    Range("A1:M" & TotalRows).Copy
+    Range("A1").PasteSpecial Paste:=xlPasteValues
+    Application.CutCopyMode = False
+    Application.DisplayAlerts = PrevDispAlert
+
+    'Fix the column headers
+    Range("A1:M1").Value = aPTableFields
+
+    'Remove the totals
+    Rows(TotalRows).Delete
+    ActiveSheet.AutoFilterMode = False
+
+    'Copy the combined data to the temp worksheet
+    Sheets("Temp").Cells.Delete
+    Range("A1:M" & TotalRows).Copy Destination:=Sheets("Temp").Range("A1")
 End Sub
 
 Sub FilterNS()
@@ -142,5 +135,3 @@ Sub FilterNS()
     removefilter ("Temp")
     Worksheets("Temp").Cells.Delete
 End Sub
-
-
