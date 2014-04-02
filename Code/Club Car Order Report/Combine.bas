@@ -3,7 +3,7 @@ Option Explicit
 
 Sub PTableAP()
     Dim TotalRows As Long
-    Dim TotalCols As Long
+    Dim TotalCols As Integer
     Dim aPTableFields() As String
     Dim PrevDispAlert As Boolean
     Dim i As Integer
@@ -59,7 +59,7 @@ Sub PTableAP()
                                       DefaultVersion:=xlPivotTableVersion14
 
     Sheets("PTableForecast").Select
-    
+
     'Add fields to the pivot table
     With ActiveSheet.PivotTables("PTableCombined")
         .PivotFields(aPTableFields(1)).Orientation = xlRowField
@@ -68,10 +68,10 @@ Sub PTableAP()
             .AddDataField ActiveSheet.PivotTables("PTableCombined").PivotFields(aPTableFields(i)), "Sum of " & Format(aPTableFields(i), "mmm"), xlSum
         Next
     End With
-    
+
     TotalRows = Rows(Rows.Count).End(xlUp).Row
     TotalCols = Columns(Columns.Count).End(xlToLeft).Column
-    
+
     'Get data from the pivot table and store it as values
     Application.DisplayAlerts = False
     Range("A1:M" & TotalRows).Copy
@@ -92,46 +92,33 @@ Sub PTableAP()
 End Sub
 
 Sub FilterNS()
-    Dim i As Long, n As Long
+    Dim ColHeaders As Variant
+    Dim TotalCols As Integer
+    Dim TotalRows As Long
+    Dim i As Long
+    Dim n As Long
 
     Worksheets("Temp").Select
-    With Range("A:M")
-        .CurrentRegion.Cut Destination:=Worksheets("Temp").Range("B1")
-    End With
-    Application.CutCopyMode = False
-    Range("A1").Value = "Sim_num"
-    Range("A2").Formula = "=VLOOKUP(B2, master!A:B,2,FALSE)"
-    With Range("B:B")
-        Range("A2").AutoFill Destination:=Range(Cells(2, 1), Cells(.CurrentRegion.Rows.Count, 1))
-    End With
-    With Range("A:A")
-        .CurrentRegion.Value = .CurrentRegion.Value
-    End With
-    With Range("A:N")
-        .CurrentRegion.AutoFilter Field:=1, Criteria1:="=Non-Stock", Operator:=xlOr, Criteria2:="=#N/A"
-        .CurrentRegion.Copy Destination:=Worksheets("Non-Stock Items").Range("A1")
-        .CurrentRegion.Offset(1, 0).SpecialCells(xlCellTypeVisible).Select
-    End With
-    With Range("A:A").SpecialCells(xlCellTypeVisible)
-        i = .SpecialCells(xlCellTypeConstants).Count
-    End With
-    Selection.ClearContents
-    Application.CutCopyMode = False
-    removefilter
-    Range("A1").Select
+    TotalRows = Rows(Rows.Count).End(xlUp).Row
+    TotalCols = Columns(Columns.Count).End(xlToLeft).Column + 1
+    Columns(1).Insert
 
-    Do While ActiveCell.Text <> ""
-        ActiveCell.Offset(1, 0).Select
-        Do While ActiveCell.Text = ""
-            If i > n Then
-                n = n + 1
-                Rows(ActiveCell.Row).Delete
-            Else
-                Exit Do
-            End If
-        Loop
-    Loop
-    Range("A:N").SpecialCells(xlCellTypeConstants).Copy Destination:=Worksheets("Combined Forecast").Range("A1")
-    removefilter ("Temp")
-    Worksheets("Temp").Cells.Delete
+    'Add SIMs
+    Range("A1").Value = "SIM"
+    Range("A2:A" & TotalRows).Formula = "=VLOOKUP(B2, Master!A:B,2,FALSE)"
+    Range("A2:A" & TotalRows).Value = Range("A2:A" & TotalRows).Value
+
+    'Copy and remove non-stock items
+    ActiveSheet.UsedRange.AutoFilter Field:=1, Criteria1:="=Non-Stock", Operator:=xlOr, Criteria2:="=#N/A"
+    ActiveSheet.UsedRange.Copy Destination:=Sheets("Non-Stock Items").Range("A1")
+    ColHeaders = Range("A1:N1").Value
+    Cells.Delete
+    Rows(1).Insert
+    ActiveSheet.Range("A1:N1").Value = ColHeaders
+    ActiveSheet.AutoFilterMode = False
+
+    'Copy the remainnig data
+    Range("C1:N1").NumberFormat = "mmm-yy"
+    ActiveSheet.UsedRange.Copy Destination:=Sheets("Combined Forecast").Range("A1")
+    Cells.Delete
 End Sub

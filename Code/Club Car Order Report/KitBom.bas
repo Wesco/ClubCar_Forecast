@@ -2,41 +2,30 @@ Attribute VB_Name = "KitBom"
 Option Explicit
 
 Sub CreateKitBOM()
-    Dim rowheaders As Variant
-    rowheaders = Array("='Combined Forecast'!C1", _
-                       "='Combined Forecast'!D1", _
-                       "='Combined Forecast'!E1", _
-                       "='Combined Forecast'!F1", _
-                       "='Combined Forecast'!G1", _
-                       "='Combined Forecast'!H1", _
-                       "='Combined Forecast'!I1", _
-                       "='Combined Forecast'!J1", _
-                       "='Combined Forecast'!K1", _
-                       "='Combined Forecast'!L1", _
-                       "='Combined Forecast'!M1", _
-                       "='Combined Forecast'!N1")
+    Dim TotalRows As Long
+    Dim TotalCols As Integer
     Dim sAddr As String
-    Dim i As Integer: i = 1
-    Dim n As Integer: n = 1
-    Dim x As Integer: x = 4
+    Dim i As Integer
+    Dim j As Integer
+
     Worksheets("Kit BOM").Select
-    Range("E1:P1").Value = rowheaders
-    Range("D2").Select
-    Do While i < 13
-        If ActiveCell.Text = "KIT" Then
-            sAddr = Replace(ActiveCell.Offset(0, n).Address, "$", "")
-            ActiveCell.Offset(0, i).Formula = "=IFERROR(VLOOKUP(" & Replace(ActiveCell.Offset(0, -1).Address, "$", "") & ",'Combined Forecast'!A:O," & x & ",FALSE),0)"
-        Else
-            ActiveCell.Offset(0, i).Formula = "=" & sAddr & "*" & Replace(ActiveCell.Address, "$", "")
-        End If
-        ActiveCell.Offset(1, 0).Select
-        If ActiveCell.Text = "" Then
-            i = i + 1
-            n = n + 1
-            x = x + 1
-            Range("D2").Select
-        End If
-    Loop
+    Range("E1:P1").Value = Sheets("Combined Forecast").Range("C1:N1").Value
+    Range("E1:P1").NumberFormat = "mmm-yy"
+    TotalCols = Columns(Columns.Count).End(xlToLeft).Column
+    TotalRows = Rows(Rows.Count).End(xlUp).Row
+
+    For j = 5 To TotalCols
+        For i = 2 To TotalRows
+            If Cells(i, 4).Value = "KIT" Then
+                sAddr = Cells(i, j).Address(False, False)    'Address of the current KIT total
+                'vlookup KIT SIM on combined forecast to get total needed for the current month
+                Cells(i, j).Formula = "=IFERROR(VLOOKUP(" & Cells(i, 3).Address(False, False) & ",'Combined Forecast'!A:N," & j - 2 & ",FALSE),0)"
+            Else
+                'Multiply the kit total by the number of components needed per kit
+                Cells(i, j).Formula = "=" & sAddr & "*" & Cells(i, 4).Address(False, False)
+            End If
+        Next
+    Next
 End Sub
 
 Sub AddKitMaterial()
@@ -121,36 +110,36 @@ Sub AddKitMaterial()
         Range("A1:M1").Value = rowheaders
         Rows(.CurrentRegion.Rows.Count).Delete
     End With
-    
+
     Worksheets("Combined Forecast").Cells.Delete
-    
+
     With Range("A:A")
         Range(Cells(1, 1), Cells(.CurrentRegion.Rows.Count, .CurrentRegion.Columns.Count)).Copy Destination:=Worksheets("Combined Forecast").Range("A1")
     End With
-    
+
     Application.CutCopyMode = False
 End Sub
 
 Sub KitDescItemLookup()
     Worksheets("Combined Forecast").Select
-    
+
     Columns("B:B").Select
     Selection.Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
     Selection.Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
-    
+
     Range("B1").Value = "Item Number"
     Range("C1").Value = "Description"
-    
+
     Range("B2").Formula = "=VLOOKUP(A2,master!B:C,2,FALSE)"
     Range("C2").Formula = "=VLOOKUP(A2, Gaps!A:B, 2, FALSE)"
-    
+
     With Range("B:C")
         Range("B2").AutoFill Destination:=Range(.Cells(2, 1), .Cells(.CurrentRegion.Rows.Count, 1))
         Range("C2").AutoFill Destination:=Range(.Cells(2, 2), .Cells(.CurrentRegion.Rows.Count, 2))
-        
+
         Range(Cells(1, 1), Cells(.CurrentRegion.Rows.Count, .CurrentRegion.Columns.Count)).Select
         Selection.Value = Selection.Value
-        
+
         Range(Cells(1, 2), Cells(.CurrentRegion.Rows.Count, .CurrentRegion.Columns.Count)).Select
         Selection.Value = Selection.Value
     End With
@@ -158,5 +147,3 @@ Sub KitDescItemLookup()
     Application.CutCopyMode = False
     Worksheets("Combined Forecast").Select
 End Sub
-
-

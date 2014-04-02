@@ -52,7 +52,7 @@ Sub Clean()
             s.Range("A1").Select
         ElseIf s.Name = "Kit BOM" Then
             s.Select
-            s.Range("E:ZZ").Delete
+            s.Range("E:P").Delete
             s.Range("A1").Select
         ElseIf s.Name = "Bulk" Then
             s.Select
