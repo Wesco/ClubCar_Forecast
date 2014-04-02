@@ -86,18 +86,9 @@ Sub AddKitMaterial()
         .Position = 1
     End With
     With ActiveSheet.PivotTables("PTKitParts")
-        .AddDataField ActiveSheet.PivotTables("PTKitParts").PivotFields(rowheaders(1, 2)), "Sum of Aug", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTKitParts").PivotFields(rowheaders(1, 3)), "Sum of Sep", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTKitParts").PivotFields(rowheaders(1, 4)), "Sum of Oct", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTKitParts").PivotFields(rowheaders(1, 5)), "Sum of Nov", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTKitParts").PivotFields(rowheaders(1, 6)), "Sum of Dec", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTKitParts").PivotFields(rowheaders(1, 7)), "Sum of Jan", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTKitParts").PivotFields(rowheaders(1, 8)), "Sum of Feb", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTKitParts").PivotFields(rowheaders(1, 9)), "Sum of Mar", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTKitParts").PivotFields(rowheaders(1, 10)), "Sum of Apr", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTKitParts").PivotFields(rowheaders(1, 11)), "Sum of May", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTKitParts").PivotFields(rowheaders(1, 12)), "Sum of Jun", xlSum
-        .AddDataField ActiveSheet.PivotTables("PTKitParts").PivotFields(rowheaders(1, 13)), "Sum of Jul", xlSum
+        For i = 2 To UBound(rowheaders, 2)
+            .AddDataField ActiveSheet.PivotTables("PTKitParts").PivotFields(Format(rowheaders(1, i), "mmm-yy")), "Sum of " & Format(rowheaders(1, i), "mmm"), xlSum
+        Next
     End With
     Rows("1:2").Delete
 

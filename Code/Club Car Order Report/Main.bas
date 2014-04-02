@@ -3,22 +3,22 @@ Option Explicit
 
 Sub OrderReport()
     Application.ScreenUpdating = False
-    
+
     Dim starttime As Double: starttime = Timer
     Dim MacroWkbk As String: MacroWkbk = ActiveWorkbook.Name
-    
+
     Worksheets("Info").Range("B4").Value = Format(Date, "m/d/yyyy")
     Worksheets("Info").Range("B5").Value = Environ("USERNAME")
 
     ImportData
     FormatGaps
-    
+
     PTableAP
     FilterNS
     CreateKitBOM
     AddKitMaterial
     KitDescItemLookup
-    
+
     CreateHeaders
     CreateForecast
     FillAP
@@ -41,26 +41,28 @@ End Sub
 Sub Clean()
     Dim PrevDispAlert As Boolean
     Dim s As Worksheet
-    
+
     PrevDispAlert = Application.DisplayAlerts
     Application.DisplayAlerts = False
-    
+
     For Each s In ThisWorkbook.Sheets
-        If s.Name <> "Macro" And s.Name <> "Kit BOM" And s.Name <> "Bulk" And s.Name <> "Master" Then
-            s.Select
+        s.Select
+        s.AutoFilterMode = False
+        If s.Name <> "Macro" And s.Name <> "Kit BOM" And _
+           s.Name <> "Bulk" And s.Name <> "Master" And s.Name <> "Info" Then
             s.Cells.Delete
-            s.Range("A1").Select
         ElseIf s.Name = "Kit BOM" Then
-            s.Select
             s.Range("E:P").Delete
-            s.Range("A1").Select
         ElseIf s.Name = "Bulk" Then
-            s.Select
             s.Range("F:ZZ").Delete
-            s.Range("A1").Select
+        ElseIf s.Name = "Info" Then
+            s.Range("B:B").Delete
+        ElseIf s.Name = "Bulk" Then
+            s.Range("F:T").Delete
         End If
+        s.Range("A1").Select
     Next
-    
+
     Sheets("Macro").Select
     Range("C6").Select
     Application.DisplayAlerts = PrevDispAlert
