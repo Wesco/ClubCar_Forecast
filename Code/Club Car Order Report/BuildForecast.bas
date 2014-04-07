@@ -2,106 +2,84 @@ Attribute VB_Name = "BuildForecast"
 Option Explicit
 
 Sub CreateForecast()
-    Dim iLength As Integer
-    Dim n As Integer
-    Dim i As Integer
-    Dim x As Integer
+    Dim TotalCols As Integer
+    Dim TotalRows As Long
+    Dim i As Long
+    Dim j As Integer
 
-    n = 4
-    x = 12
+    Sheets("Combined Forecast").Select
+    TotalRows = Rows(Rows.Count).End(xlUp).Row
 
-    Worksheets("Combined Forecast").Select
-    With Range("A:A")
-        iLength = (.CurrentRegion.Rows.Count)
-    End With
+    'Get SIM Numbers
+    Range("A2:A" & TotalRows).Copy Destination:=Sheets("Forecast").Range("A2")
 
-    Worksheets("Forecast").Select
+    'Get Item Numbers
+    Range("B2:B" & TotalRows).Copy Destination:=Sheets("Forecast").Range("B2")
 
-    'Sim Number
-    Range("A2").Formula = "='Combined Forecast'!A2"
-    Range("A2").AutoFill Destination:=Range(Cells(2, 1), Cells(iLength, 1))
+    'Get Descriptions
+    Range("C2:C" & TotalRows).Copy Destination:=Sheets("Forecast").Range("C2")
 
-    'Item Number
-    Range("B2").Formula = "='Combined Forecast'!B2"
-    Range("B2").AutoFill Destination:=Range(Cells(2, 2), Cells(iLength, 2))
+    Sheets("Forecast").Select
 
-    'Description
-    Range("C2").Formula = "='Combined Forecast'!C2"
-    Range("C2").AutoFill Destination:=Range(Cells(2, 3), Cells(iLength, 3))
+    'Add column headers
+    Range("A1:L1").Value = Array("Sims", "Items", "Description", "On Hand", "Reserve", "OO", "BO", "WDC", "Last Cost", "UOM", "Supplier", "A/P")
+    Range("M1:X1").Formula = "='Combined Forecast'!D1"
+    Range("M1:X1").Value = Range("M1:X1").Value
+
+    TotalCols = Columns(Columns.Count).End(xlToLeft).Column
+    TotalRows = Rows(Rows.Count).End(xlUp).Row
 
     'On Hand
-    Range("D2").Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:C, 3, False),""0"")"
-    Range("D2").AutoFill Destination:=Range(Cells(2, 4), Cells(iLength, 4))
+    Range("D2:D" & TotalRows).Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:C, 3, False),0)"
+    Range("D2:D" & TotalRows).Value = Range("D2:D" & TotalRows).Value
 
     'On Reserve
-    Range("E2").Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:D, 4, False),""0"")"
-    Range("E2").AutoFill Destination:=Range(Cells(2, 5), Cells(iLength, 5))
+    Range("E2:E" & TotalRows).Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:D, 4, False),0)"
+    Range("E2:E" & TotalRows).Value = Range("E2:E" & TotalRows).Value
 
     'On Order
-    Range("F2").Formula = "=IFERROR(VLOOKUP(A2,Gaps!A:F,6,FALSE),""0"")"
-    Range("F2").AutoFill Destination:=Range(Cells(2, 6), Cells(iLength, 6))
+    Range("F2:F" & TotalRows).Formula = "=IFERROR(VLOOKUP(A2,Gaps!A:F,6,FALSE),0)"
+    Range("F2:F" & TotalRows).Value = Range("F2:F" & TotalRows).Value
 
     'On Back Order
-    Range("G2").Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:E, 5, False),""0"")"
-    Range("G2").AutoFill Destination:=Range(Cells(2, 7), Cells(iLength, 7))
+    Range("G2:G" & TotalRows).Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:E, 5, False),0)"
+    Range("G2:G" & TotalRows).Value = Range("G2:G" & TotalRows).Value
 
     'WDC Qty On Hand
-    Range("H2").Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:AG, 33, False),""0"")"
-    Range("H2").AutoFill Destination:=Range(Cells(2, 8), Cells(iLength, 8))
+    Range("H2:H" & TotalRows).Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:AG, 33, False),0)"
+    Range("H2:H" & TotalRows).Value = Range("H2:H" & TotalRows).Value
 
     'Average Unit Cost
-    Range("I2").Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:AC, 29, False),""0"")"
-    Range("I2").AutoFill Destination:=Range(Cells(2, 9), Cells(iLength, 9))
+    Range("I2:I" & TotalRows).Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:AC, 29, False),0)"
+    Range("I2:I" & TotalRows).Value = Range("I2:I" & TotalRows).Value
 
     'Unit of Measure
-    Range("J2").Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:AF, 32, False),""0"")"
-    Range("J2").AutoFill Destination:=Range(Cells(2, 10), Cells(iLength, 10))
+    Range("J2:J" & TotalRows).Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:AF, 32, False),0)"
+    Range("J2:J" & TotalRows).Value = Range("J2:J" & TotalRows).Value
 
     'Supplier
-    Range("K2").Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:AI, 35, False),"""")"
-    Range("K2").AutoFill Destination:=Range(Cells(2, 11), Cells(iLength, 11))
+    Range("K2:K" & TotalRows).Formula = "=IFERROR(VLOOKUP(A2, Gaps!A:AI, 35, False),"""")"
+    Range("K2:K" & TotalRows).Value = Range("K2:K" & TotalRows).Value
 
     'Month 1 Forecast
-    Range("M2").Formula = "=D2-VLOOKUP(A2,'Combined Forecast'!A:P,4,FALSE)"
-    Range("M2").AutoFill Destination:=Range(Cells(2, 13), Cells(iLength, 13))
+    Range("M2:M" & TotalRows).Formula = "=D2-VLOOKUP(A2,'Combined Forecast'!A:P,4,FALSE)"
+    Range("M2:M" & TotalRows).Value = Range("M2:M" & TotalRows).Value
 
-    Range("N2").Select
+    'Months 2 - 12 forecast
+    For i = 14 To TotalCols
+        Range(Cells(2, i), Cells(TotalRows, i)).Formula = "=" & Cells(2, i - 1).Address(False, False) & "-VLOOKUP(A2,'Combined Forecast'!A:P," & i - 9 & ",FALSE)"
+    Next
 
-    'Months 2 - 12
-    Do While i < 11
-        i = i + 1
-        n = n + 1
-        x = x + 1
-        ActiveCell.Formula = "=" & Replace(Cells(2, x).Address, "$", "") & "-VLOOKUP(A2,'Combined Forecast'!A:P, " & n & ",FALSE)"
-        ActiveCell.AutoFill Destination:=Range(Cells(2, ActiveCell.Column), Cells(iLength, ActiveCell.Column))
-        ActiveCell.Offset(0, 1).Select
-    Loop
-
-    Range("A1").Select
-    For i = 2 To ActiveSheet.UsedRange.Rows.Count
+    'UOM conversions
+    For i = 2 To TotalRows
         If Cells(i, 1).Value = "5113106375" Then
-            'On Hand
-            Cells(i, 4).Formula = "=CONVERT(" & Cells(i, 4).Value & "*36,""yd"",""ft"")"
-            'On Reserve
-            Cells(i, 5).Formula = "=CONVERT(" & Cells(i, 5).Value & "*36,""yd"",""ft"")"
-            'On Order
-            Cells(i, 6).Formula = "=CONVERT(" & Cells(i, 6).Value & "*36,""yd"",""ft"")"
-            'Back Order
-            Cells(i, 7).Formula = "=CONVERT(" & Cells(i, 7).Value & "*36,""yd"",""ft"")"
-            'WDC
-            Cells(i, 8).Formula = "=CONVERT(" & Cells(i, 8).Value & "*36,""yd"",""ft"")"
-        End If
-        If Cells(i, 1).Value = "99814198888" Then
-            'On Hand
-            Cells(i, 4).Value = Cells(i, 4).Value * 50
-            'On Reserve
-            Cells(i, 5).Value = Cells(i, 5).Value * 50
-            'On Order
-            Cells(i, 6).Value = Cells(i, 6).Value * 50
-            'Back Order
-            Cells(i, 7).Value = Cells(i, 7).Value * 50
-            'WDC
-            Cells(i, 8).Value = Cells(i, 8).Value * 50
+            For j = 4 To 8
+                Cells(i, j).Formula = "=CONVERT(" & Cells(i, j).Value & "*36,""yd"",""ft"")"
+            Next
+        ElseIf Cells(i, 1).Value = "99814198888" Then
+            For j = 4 To 8
+                Cells(i, j).Value = Cells(i, j).Value * 50
+            Next
         End If
     Next
 
@@ -113,8 +91,8 @@ Sub CreateForecast()
     End With
 
     Cells.HorizontalAlignment = xlCenter
-    Range(Cells(2, 3), Cells(iLength, 3)).HorizontalAlignment = xlLeft
-    Range(Cells(2, 2), Cells(iLength, 2)).HorizontalAlignment = xlRight
+    Range(Cells(2, 3), Cells(TotalRows, 3)).HorizontalAlignment = xlLeft
+    Range(Cells(2, 2), Cells(TotalRows, 2)).HorizontalAlignment = xlRight
 End Sub
 
 Sub FillAP()
@@ -283,35 +261,4 @@ Sub CreateBulk()
         .TintAndShade = 0
         .PatternTintAndShade = 0
     End With
-
 End Sub
-
-Sub CreateHeaders()
-    Worksheets("Forecast").Select
-    Range("A1").Value = "Sims"
-    Range("B1").Value = "Items"
-    Range("C1").Value = "Description"
-    Range("D1").Value = "On Hand"
-    Range("E1").Value = "Reserve"
-    Range("F1").Value = "OO"
-    Range("G1").Value = "BO"
-    Range("H1").Value = "WDC"
-    Range("I1").Value = "Last Cost"
-    Range("J1").Value = "UOM"
-    Range("K1").Value = "Supplier"
-    Range("L1").Value = "A/P"
-    Range("M1").Formula = "='Combined Forecast'!D1"
-    Range("N1").Formula = "='Combined Forecast'!E1"
-    Range("O1").Formula = "='Combined Forecast'!F1"
-    Range("P1").Formula = "='Combined Forecast'!G1"
-    Range("Q1").Formula = "='Combined Forecast'!H1"
-    Range("R1").Formula = "='Combined Forecast'!I1"
-    Range("S1").Formula = "='Combined Forecast'!J1"
-    Range("T1").Formula = "='Combined Forecast'!K1"
-    Range("U1").Formula = "='Combined Forecast'!L1"
-    Range("V1").Formula = "='Combined Forecast'!M1"
-    Range("W1").Formula = "='Combined Forecast'!N1"
-    Range("X1").Formula = "='Combined Forecast'!O1"
-End Sub
-
-

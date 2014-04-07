@@ -65,7 +65,7 @@ Sub PTableAP()
         .PivotFields(aPTableFields(1)).Orientation = xlRowField
         .PivotFields(aPTableFields(1)).Position = 1
         For i = 2 To UBound(aPTableFields)
-            .AddDataField ActiveSheet.PivotTables("PTableCombined").PivotFields(aPTableFields(i)), "Sum of " & Format(aPTableFields(i), "mmm"), xlSum
+            .AddDataField ActiveSheet.PivotTables("PTableCombined").PivotFields(aPTableFields(i)), "Sum of " & Format(aPTableFields(i), "mmm dd, yyyy"), xlSum
         Next
     End With
 
@@ -115,10 +115,9 @@ Sub FilterNS()
     Cells.Delete
     Rows(1).Insert
     ActiveSheet.Range("A1:N1").Value = ColHeaders
-    ActiveSheet.AutoFilterMode = False
 
     'Copy the remainnig data
-    Range("C1:N1").NumberFormat = "mmm-yy"
+    Range("C1:N1").NumberFormat = "d-mmm-yy"
     ActiveSheet.UsedRange.Copy Destination:=Sheets("Combined Forecast").Range("A1")
     Cells.Delete
 End Sub
