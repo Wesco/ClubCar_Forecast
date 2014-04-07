@@ -108,7 +108,7 @@ Sub FormatPivTable(wksheet As String)
         If Cells(1, i).Value <> "" Then
             sYear = Cells(1, i).Value
         End If
-        Cells(1, i).Value = Cells(2, i).Value & "-" & sYear
+        Cells(1, i).Value = Cells(2, i).Value & "01, " & sYear
     Next
     
     'Remove the "Total" column
@@ -143,7 +143,7 @@ Sub FormatPivTable(wksheet As String)
     If TotalCols < 15 Then
         For i = TotalCols + 1 To 14
             Cells(1, i).Value = DateAdd("m", 1, Cells(1, i - 1).Value)
-            Cells(1, i).NumberFormat = "mmm-yy"
+            Cells(1, i).NumberFormat = "d-mmm-yy"
             Range(Cells(2, i), Cells(TotalRows, i)).Value = 0
         Next
     Else
