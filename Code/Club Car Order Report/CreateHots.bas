@@ -4,7 +4,8 @@ Option Explicit
 Sub Hotsheet()
     Dim sLoc As String: sLoc = "\\BR3615GAPS\gaps\Hotsheet\"
     Dim iCounter As Integer: iCounter = 0
-
+    Dim TotalRows As Long
+    
     For iCounter = 0 To 14
         If FileOrDirExists(sLoc & "Club Car Hot " & Format(Date - iCounter, "m-dd-yy") & ".xlsx") = True Then
             sLoc = sLoc & "Club Car Hot " & Format(Date - iCounter, "m-dd-yy") & ".xlsx"
@@ -28,9 +29,8 @@ Sub Hotsheet()
     Next
 
     Worksheets("Forecast").Select
-    With Range("A:A")
-        Range("A:H,J:X").SpecialCells(xlCellTypeConstants).Copy Destination:=Worksheets("Hotsheet").Range("A1")
-    End With
+    TotalRows = Rows(Rows.Count).End(xlUp).Row
+    Range("A1:H" & TotalRows & ",J1:X" & TotalRows).Copy Destination:=Worksheets("Hotsheet").Range("A1")
     Worksheets("Hotsheet").Select
     Range("X1").Value = "Notes"
     Range("Y1").Value = "Note Date"

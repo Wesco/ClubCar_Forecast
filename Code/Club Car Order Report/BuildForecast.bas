@@ -63,7 +63,6 @@ Sub CreateForecast()
 
     'Month 1 Forecast
     Range("M2:M" & TotalRows).Formula = "=D2-VLOOKUP(A2,'Combined Forecast'!A:P,4,FALSE)"
-    Range("M2:M" & TotalRows).Value = Range("M2:M" & TotalRows).Value
 
     'Months 2 - 12 forecast
     For i = 14 To TotalCols
@@ -83,14 +82,15 @@ Sub CreateForecast()
         End If
     Next
 
+
     With Range("A:X")
         Range(Cells(1, 1), Cells(.CurrentRegion.Rows.Count, 24)).Select
-        With Selection
+        With Range(Cells(1, 1), Cells(TotalRows, TotalCols))
             .Value = .Value
+            .HorizontalAlignment = xlCenter
         End With
     End With
 
-    Cells.HorizontalAlignment = xlCenter
     Range(Cells(2, 3), Cells(TotalRows, 3)).HorizontalAlignment = xlLeft
     Range(Cells(2, 2), Cells(TotalRows, 2)).HorizontalAlignment = xlRight
 End Sub
