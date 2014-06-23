@@ -153,12 +153,11 @@ Sub CreateBulk()
                  "='Combined Forecast'!F1", _
                  "='Combined Forecast'!G1", _
                  "='Combined Forecast'!H1", _
-                 "=""End "" & 'Combined Forecast'!D1", _
-                 "=""End "" & 'Combined Forecast'!E1", _
-                 "=""End "" & 'Combined Forecast'!F1", _
-                 "=""End "" & 'Combined Forecast'!G1", _
-                 "=""End "" & 'Combined Forecast'!H1")
-
+                 "=""End "" & TEXT('Combined Forecast'!D1, ""mmm"")", _
+                 "=""End "" & TEXT('Combined Forecast'!E1, ""mmm"")", _
+                 "=""End "" & TEXT('Combined Forecast'!F1, ""mmm"")", _
+                 "=""End "" & TEXT('Combined Forecast'!G1, ""mmm"")", _
+                 "=""End "" & TEXT('Combined Forecast'!H1, ""mmm"")")
 
     rowdata = Array( _
               "=IFERROR(VLOOKUP(B2, Gaps!A:C, 3, FALSE), 0)", _
@@ -174,81 +173,33 @@ Sub CreateBulk()
               "=F2-K2", "=P2-L2", "=Q2-M2", "=R2-N2", "=S2-O2")
 
 
-
     Worksheets("Bulk").Select
-
     Range("A1:T1") = rowheaders
-    Range("F2:T2") = rowdata
-
-    With Range("F:L")
-        Range("F2").AutoFill Destination:=Range(Cells(2, 6), Cells(.CurrentRegion.Rows.Count, 6))
-        Range("G2").AutoFill Destination:=Range(Cells(2, 7), Cells(.CurrentRegion.Rows.Count, 7))
-        Range("H2").AutoFill Destination:=Range(Cells(2, 8), Cells(.CurrentRegion.Rows.Count, 8))
-        Range("I2").AutoFill Destination:=Range(Cells(2, 9), Cells(.CurrentRegion.Rows.Count, 9))
-        Range("J2").AutoFill Destination:=Range(Cells(2, 10), Cells(.CurrentRegion.Rows.Count, 10))
-        Range("K2").AutoFill Destination:=Range(Cells(2, 11), Cells(.CurrentRegion.Rows.Count, 11))
-        Range("L2").AutoFill Destination:=Range(Cells(2, 12), Cells(.CurrentRegion.Rows.Count, 12))
-        Range("M2").AutoFill Destination:=Range(Cells(2, 13), Cells(.CurrentRegion.Rows.Count, 13))
-        Range("N2").AutoFill Destination:=Range(Cells(2, 14), Cells(.CurrentRegion.Rows.Count, 14))
-        Range("O2").AutoFill Destination:=Range(Cells(2, 15), Cells(.CurrentRegion.Rows.Count, 15))
-        Range("P2").AutoFill Destination:=Range(Cells(2, 16), Cells(.CurrentRegion.Rows.Count, 16))
-        Range("Q2").AutoFill Destination:=Range(Cells(2, 17), Cells(.CurrentRegion.Rows.Count, 17))
-        Range("R2").AutoFill Destination:=Range(Cells(2, 18), Cells(.CurrentRegion.Rows.Count, 18))
-        Range("S2").AutoFill Destination:=Range(Cells(2, 19), Cells(.CurrentRegion.Rows.Count, 19))
-        Range("T2").AutoFill Destination:=Range(Cells(2, 20), Cells(.CurrentRegion.Rows.Count, 20))
-    End With
-
-    With Range("A:T")
-        Range(Cells(1, 1), Cells(.CurrentRegion.Rows.Count, .CurrentRegion.Columns.Count)).Select
-    End With
-
-    With Selection
-        .Value = .Value
-    End With
-
+    Range("K1:O1").NumberFormat = "mmm"
+    
     TotalRows = ActiveSheet.UsedRange.Rows.Count
     TotalCols = ActiveSheet.UsedRange.Columns.Count
+    
+    Range("F2:T" & TotalRows) = rowdata
+    Range("F1:T" & TotalRows).Value = Range("F1:T" & TotalRows).Value
 
-    Range("A1").Select
-    Selection.AutoFilter
     ActiveSheet.UsedRange.AutoFilter Field:=1, Criteria1:="J"
+    ActiveSheet.UsedRange.Font.Bold = True
 
-    With Range("A:T").SpecialCells(xlCellTypeVisible)
-        .SpecialCells(xlCellTypeConstants).Font.Bold = True
-    End With
-
-    ActiveSheet.ShowAllData
     ActiveSheet.UsedRange.AutoFilter Field:=1, Criteria1:="I"
+    ActiveSheet.UsedRange.Font.Bold = False
 
-    With Range("A:T").SpecialCells(xlCellTypeVisible)
-        .SpecialCells(xlCellTypeConstants).Font.Bold = False
-    End With
+    ActiveSheet.UsedRange.AutoFilter Field:=1, Criteria1:=RGB(204, 255, 204), Operator:=xlFilterCellColor
+    ActiveSheet.UsedRange.Interior.Color = 13434828
 
-    ActiveSheet.ShowAllData
-    ActiveSheet.UsedRange.AutoFilter Field:=2, Criteria1:=RGB(204, 255, 204), Operator:=xlFilterCellColor
+    ActiveSheet.UsedRange.AutoFilter Field:=1, Criteria1:=RGB(255, 255, 153), Operator:=xlFilterCellColor
+    ActiveSheet.UsedRange.Interior.Color = 10092543
 
-    With Range("A:T").SpecialCells(xlCellTypeVisible)
-        .SpecialCells(xlCellTypeConstants).Interior.Color = 13434828
-    End With
-
-    ActiveSheet.ShowAllData
-    ActiveSheet.Range(Cells(1, 1), Cells(TotalRows, TotalCols)).AutoFilter Field:=3, _
-                                                                           Criteria1:=RGB(255, 255, 153), _
-                                                                           Operator:=xlFilterCellColor
-
-    With Range("A:T").SpecialCells(xlCellTypeVisible)
-        .SpecialCells(xlCellTypeConstants).Interior.Color = 10092543
-    End With
-
-    ActiveSheet.ShowAllData
-    Selection.AutoFilter
+    ActiveSheet.AutoFilterMode = False
 
     Range("A1:T1").Font.Bold = True
     Range("A1:T1").HorizontalAlignment = xlCenter
-
-    With Range("F:T")
-        Range(.Cells(2, 1), .Cells(.CurrentRegion.Rows.Count, 11)).HorizontalAlignment = xlCenter
-    End With
+    Range("F2:T" & TotalRows).HorizontalAlignment = xlCenter
 
     With Range("A1:T1").Interior
         .Pattern = xlNone
