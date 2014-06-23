@@ -42,8 +42,7 @@ Sub FormatHots()
     Columns("L:W").Select
     Selection.FormatConditions.Add Type:=xlCellValue, Operator:=xlLess, Formula1:="=0"
     Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
-    'Selection.FormatConditions(1).Font.Color = -16383844
-    'Selection.FormatConditions(1).Font.TintAndShade = 0
+
     With Selection.FormatConditions(1).Interior
         .PatternColorIndex = xlAutomatic
         .Color = 13551615
