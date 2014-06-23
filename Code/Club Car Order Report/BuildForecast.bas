@@ -71,7 +71,7 @@ Sub CreateForecast()
 
     'UOM conversions
     For i = 2 To TotalRows
-        If Cells(i, 1).Value = "5113106375" Then
+        If Cells(i, 1).Value = "05113106375" Then
             For j = 4 To 8
                 Cells(i, j).Formula = "=CONVERT(" & Cells(i, j).Value & "*36,""yd"",""ft"")"
             Next
