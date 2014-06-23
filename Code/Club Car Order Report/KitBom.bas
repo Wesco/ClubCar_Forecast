@@ -26,8 +26,8 @@ Sub CreateKitBOM()
             End If
         Next
     Next
-
-    ActiveSheet.UsedRange.Value = ActiveSheet.UsedRange.Value
+    
+    Range("E2:P" & TotalRows).Value = Range("E2:P" & TotalRows).Value
 End Sub
 
 Sub AddKitMaterial()

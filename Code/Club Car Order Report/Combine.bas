@@ -105,7 +105,7 @@ Sub FilterNS()
 
     'Add SIMs
     Range("A1").Value = "SIM"
-    Range("A2:A" & TotalRows).Formula = "=VLOOKUP(B2, Master!A:B,2,FALSE)"
+    Range("A2:A" & TotalRows).Formula = "=""=""&""""""""&VLOOKUP(B2, Master!A:B,2,FALSE)&"""""""""
     Range("A2:A" & TotalRows).Value = Range("A2:A" & TotalRows).Value
 
     'Copy and remove non-stock items
