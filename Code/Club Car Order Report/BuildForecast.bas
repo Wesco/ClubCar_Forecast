@@ -82,14 +82,8 @@ Sub CreateForecast()
         End If
     Next
 
-
-    With Range("A:X")
-        Range(Cells(1, 1), Cells(.CurrentRegion.Rows.Count, 24)).Select
-        With Range(Cells(1, 1), Cells(TotalRows, TotalCols))
-            .Value = .Value
-            .HorizontalAlignment = xlCenter
-        End With
-    End With
+    Range(Cells(1, 2), Cells(TotalRows, TotalCols)).Value = Range(Cells(1, 2), Cells(TotalRows, TotalCols)).Value
+    Range(Cells(1, 1), Cells(TotalRows, TotalCols)).HorizontalAlignment = xlCenter
 
     Range(Cells(2, 3), Cells(TotalRows, 3)).HorizontalAlignment = xlLeft
     Range(Cells(2, 2), Cells(TotalRows, 2)).HorizontalAlignment = xlRight
