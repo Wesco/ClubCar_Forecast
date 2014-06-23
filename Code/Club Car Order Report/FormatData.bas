@@ -5,28 +5,16 @@ Sub FormatGaps()
     Dim iRows As Long
 
     Worksheets("Gaps").Select
+    iRows = ActiveSheet.UsedRange.Rows.Count
     Columns(1).ClearContents
     Range("A1").Value = "Sim_no"
-    Range("A2").Formula = "=B2 & C2"
-    With Range("A:B")
-        iRows = .CurrentRegion.Rows.Count
-        Range("A2").AutoFill Destination:=Range(Cells(2, 1), .Cells(iRows, 1))
-        Range(Cells(1, 1), Cells(.CurrentRegion.Rows.Count, 1)).Value = Range(Cells(1, 1), Cells(.CurrentRegion.Rows.Count, 1)).Value
-    End With
-    Range(Cells(1, 1), Cells(iRows, 1)).NumberFormat = "00000000000"
+    Range("A2:A" & iRows).Formula = "=""=""&""""""""&RIGHT(""000000""&B2, 6)&RIGHT(""00000""&C2,5)&"""""""""
+    Range("A2:A" & iRows).Value = Range("A2:A" & iRows).Value
     Range("B:D").Delete
-    With Range("A:F")
-        Range(Cells(1, 1), Cells(.CurrentRegion.Rows.Count, 6)).Value = Range(Cells(1, 1), Cells(.CurrentRegion.Rows.Count, 6)).Value
-    End With
-    With Range("AC:AG")
-        Range(Cells(1, 29), Cells(.CurrentRegion.Rows.Count, 33)).Value = Range(Cells(1, 29), Cells(.CurrentRegion.Rows.Count, 33)).Value
-    End With
-    With Range("AI:AI")
-        Range(Cells(1, 35), Cells(.CurrentRegion.Rows.Count, 35)).Value = Range(Cells(1, 35), Cells(.CurrentRegion.Rows.Count, 35)).Value
-    End With
-    With Range("CF:CF")
-        Range(Cells(1, 84), Cells(.CurrentRegion.Rows.Count, 84)).Value = Range(Cells(1, 84), Cells(.CurrentRegion.Rows.Count, 84)).Value
-    End With
+    Range("B1:F" & iRows).Value = Range("B1:F" & iRows).Value
+    Range("AC1:AG" & iRows).Value = Range("AC1:AG" & iRows).Value
+    Range("AI1:AI" & iRows).Value = Range("AI1:AI" & iRows).Value
+    Range("CF1:CF" & iRows).Value = Range("CF1:CF" & iRows).Value
 End Sub
 
 Sub RedBelowZero()
