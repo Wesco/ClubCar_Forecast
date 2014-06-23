@@ -9,32 +9,24 @@ Sub RemoveNonStock()
     iRows = ActiveSheet.UsedRange.Rows.Count + 1
 
     Worksheets("Combined Forecast").Select
-    ActiveSheet.Range("A:O").AutoFilter Field:=3, Criteria1:="#N/A"
+    ActiveSheet.Range("A:O").AutoFilter Field:=3, Criteria1:=""
     ActiveSheet.UsedRange.Copy Destination:=Worksheets("Non-Stock Items").Cells(iRows, 1)
 
     Worksheets("Non-Stock Items").Select
 
     Rows(iRows).Delete Shift:=xlUp
     Range(Cells(iRows, 3), Cells(ActiveSheet.UsedRange.Rows.Count, 3)).Delete Shift:=xlToLeft
-    ActiveSheet.UsedRange.Select
-    Selection.EntireColumn.AutoFit
-    Range("A1").Select
+    ActiveSheet.UsedRange.Columns.AutoFit
 
     Worksheets("Combined Forecast").Select
-    Application.CutCopyMode = False
-    Selection.AutoFilter
-    Range("A1").Select
+    ActiveSheet.AutoFilterMode = False
 
     Worksheets("Forecast").Select
     iRows = ActiveSheet.UsedRange.Rows.Count
-    Range("C1").Select
 
-    For iCounter = 1 To iRows
-        If ActiveCell.Text = "#N/A" Then
-            Rows(ActiveCell.Row).Delete Shift:=xlUp
-        End If
-        If ActiveCell.Text <> "#N/A" Then
-            ActiveCell.Offset(1, 0).Select
+    For iCounter = iRows To 2 Step -1
+        If Cells(iCounter, 3).Value = "" Then
+            Rows(iCounter).Delete
         End If
     Next
 
