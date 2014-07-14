@@ -25,9 +25,6 @@ Sub ImportData()
     sDate = Format(Date, "yyyy-mm-dd")
     i = 0
 
-    'Store most up to date gaps filename
-    sGaps = sGaps & sDate & ".csv"
-
     'Import Warehouse A Forecast
     Workbooks.Open (sFcstLoc & sWhseA)
     'Range("A:O").Copy Destination:=rngAFcst ' code not needed - remove this
