@@ -8,10 +8,6 @@ Sub FormatGaps()
     iRows = ActiveSheet.UsedRange.Rows.Count
     Range("A1").Value = "Sim_no"
     Range("B:E").Delete
-    Range("B1:F" & iRows).Value = Range("B1:F" & iRows).Value
-    Range("AC1:AG" & iRows).Value = Range("AC1:AG" & iRows).Value
-    Range("AI1:AI" & iRows).Value = Range("AI1:AI" & iRows).Value
-    Range("CF1:CF" & iRows).Value = Range("CF1:CF" & iRows).Value
 End Sub
 
 Sub RedBelowZero()
