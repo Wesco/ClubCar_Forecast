@@ -6,11 +6,8 @@ Sub FormatGaps()
 
     Worksheets("Gaps").Select
     iRows = ActiveSheet.UsedRange.Rows.Count
-    Columns(1).ClearContents
     Range("A1").Value = "Sim_no"
-    Range("A2:A" & iRows).Formula = "=""=""&""""""""&RIGHT(""000000""&B2, 6)&RIGHT(""00000""&C2,5)&"""""""""
-    Range("A2:A" & iRows).Value = Range("A2:A" & iRows).Value
-    Range("B:D").Delete
+    Range("B:E").Delete
     Range("B1:F" & iRows).Value = Range("B1:F" & iRows).Value
     Range("AC1:AG" & iRows).Value = Range("AC1:AG" & iRows).Value
     Range("AI1:AI" & iRows).Value = Range("AI1:AI" & iRows).Value
