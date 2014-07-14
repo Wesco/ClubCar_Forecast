@@ -25,14 +25,6 @@ Sub ImportData()
     sDate = Format(Date, "yyyy-mm-dd")
     i = 0
 
-    'Find the most up to date gaps file
-    Do While FileOrDirExists(sGapsLoc & sGaps & sDate & ".csv") = False
-        i = i + 1
-        sDate = Format(Date - i, "yyyy-mm-dd")
-    Loop
-
-    Worksheets("Info").Range("B2").Value = sDate
-
     'Store most up to date gaps filename
     sGaps = sGaps & sDate & ".csv"
 
