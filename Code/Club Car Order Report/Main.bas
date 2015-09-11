@@ -32,7 +32,7 @@ Sub OrderReport()
 
     Worksheets("Macro").Select
     MsgBox ("Complete!")
-    Email SendTo:="JBarnhill@wesco.com", Subject:="Club Car Forecast", Body:="""\\BR3615GAPS\gaps\Club Car\Order Report\Order Report " & Format(Date, "m-dd-yy") & ".xlsx"""
+    Email SendTo:="ACoffey@wesco.com", Subject:="Club Car Forecast", Body:="""\\BR3615GAPS\gaps\Club Car\Order Report\Order Report " & Format(Date, "m-dd-yy") & ".xlsx"""
     Email SendTo:="ACoffey@wesco.com", Subject:="Club Car Hotsheet", Body:="""\\BR3615GAPS\gaps\Hotsheet\Club Car Hot " & Format(Date, "m-dd-yy") & ".xlsx"""
     Application.ScreenUpdating = True
 End Sub
